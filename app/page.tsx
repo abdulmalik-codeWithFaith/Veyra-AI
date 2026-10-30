@@ -1103,9 +1103,9 @@ function Footer() {
         ))}
       </div>
       <div className="border-t border-border">
-        <p className={`${container} py-6 text-sm text-text-muted`}>
+        {/* <p className={`${container} py-6 text-sm text-text-muted`}>
           © {new Date().getFullYear()} Veyra. All rights reserved.
-        </p>
+        </p> */}
       </div>
     </footer>
   );
