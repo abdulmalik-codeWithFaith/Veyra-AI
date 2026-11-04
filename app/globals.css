@@ -9,7 +9,8 @@
    Components should use the Tailwind utilities generated below
    (bg-surface, text-text-muted, border-border, ...) and never raw hex.
 ------------------------------------------------------------------- */
-:root {
+:root,
+.light {
   color-scheme: light;
 
   --background: #f8f8fa;
@@ -30,6 +31,7 @@
   --warning-soft: #fff4de;
   --danger: #d12f3f;
   --danger-soft: #fdeaec;
+  --danger-foreground: #ffffff;
   --info: #1f78c8;
   --info-soft: #e6f1fb;
 
@@ -40,29 +42,30 @@
 .dark {
   color-scheme: dark;
 
-  --background: #0e0e13;
-  --surface: #16161d;
-  --surface-muted: #1d1d26;
-  --border: #2a2a36;
-  --text: #ededf3;
-  --text-muted: #9b9bad;
+  --background: #0a0a12;
+  --surface: #121220;
+  --surface-muted: #1a1a2e;
+  --border: #272741;
+  --text: #f2f2fa;
+  --text-muted: #a3a3c0;
 
-  --primary: #8b8bf0;
-  --primary-hover: #a0a0f5;
-  --primary-foreground: #0e0e13;
-  --primary-soft: #23233f;
+  --primary: #8f8ff8;
+  --primary-hover: #a6a6fb;
+  --primary-foreground: #0a0a12;
+  --primary-soft: #24244d;
 
-  --success: #4cc38a;
-  --success-soft: #12261d;
-  --warning: #f0b040;
-  --warning-soft: #2a2010;
-  --danger: #f2707d;
-  --danger-soft: #2c1519;
-  --info: #5fa8ec;
-  --info-soft: #132235;
+  --success: #4ade9a;
+  --success-soft: #11291f;
+  --warning: #fbbf4a;
+  --warning-soft: #2e2410;
+  --danger: #fb7185;
+  --danger-soft: #331519;
+  --danger-foreground: #0a0a12;
+  --info: #60b0ff;
+  --info-soft: #11263d;
 
-  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
-  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 12px 32px rgb(0 0 0 / 0.4);
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.4), 0 16px 48px rgb(0 0 0 / 0.55);
 }
 
 /* Expose tokens to Tailwind as utilities */
@@ -85,6 +88,7 @@
   --color-warning-soft: var(--warning-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
+  --color-danger-foreground: var(--danger-foreground);
   --color-info: var(--info);
   --color-info-soft: var(--info-soft);
 
@@ -131,6 +135,14 @@
     scrollbar-width: thin;
     scrollbar-color: var(--border) transparent;
   }
+}
+
+/* Faint grid used behind marketing hero sections */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 56px 56px;
 }
 
 /* Respect reduced motion for CSS-driven animation and transitions */

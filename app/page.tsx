@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
@@ -166,6 +167,9 @@ const btn =
 const btnPrimary = `${btn} bg-primary text-primary-foreground hover:bg-primary-hover h-10 px-4`;
 const btnSecondary = `${btn} border border-border bg-surface text-text hover:bg-surface-muted h-10 px-4`;
 const btnGhost = `${btn} text-text-muted hover:text-text hover:bg-surface-muted h-10 px-3`;
+
+// Fixed on purpose: Next.js 16 rejects new Date() in client components during prerender.
+const COPYRIGHT_YEAR = 2026;
 
 const container = "mx-auto w-full max-w-6xl px-5 sm:px-8";
 
@@ -511,7 +515,7 @@ function Hero() {
       />
       <div
         aria-hidden
-        className="absolute left-1/2 top-24 -z-10 h-72 w-[42rem] max-w-full -translate-x-1/2 rounded-full bg-primary/15 blur-3xl"
+        className="absolute left-1/2 top-24 -z-10 h-72 w-[42rem] max-w-full -translate-x-1/2 rounded-full bg-primary/15 blur-3xl dark:bg-primary/30"
       />
 
       <div className={`${container} pb-20 pt-14 text-center sm:pt-20`}>
@@ -559,18 +563,30 @@ function Hero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut", delay: 0.25 }}
-          className="relative mx-auto mt-16 max-w-4xl text-left"
+          className="relative mx-auto mt-16 max-w-5xl text-left"
           role="img"
           aria-label="Veyra dashboard showing progress across Product, Engineering, Design and Marketing"
         >
-          <HeroDashboard />
+          <div className="relative overflow-hidden rounded-[2rem] p-4 shadow-lift sm:p-10">
+            <Image
+              src="/images/panel-analysis.svg"
+              alt=""
+              fill
+              priority
+              sizes="1024px"
+              className="object-cover"
+            />
+            <div className="relative mx-auto max-w-4xl">
+              <HeroDashboard />
+            </div>
+          </div>
 
           {/* Floating cards overlap the frame on large screens */}
           <motion.div
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 1.1 }}
-            className="absolute -right-6 -top-6 hidden w-56 rounded-xl border border-border bg-surface p-3.5 shadow-lift lg:block"
+            className="absolute -right-4 -top-5 hidden w-56 rounded-xl border border-border bg-surface p-3.5 shadow-lift lg:block"
           >
             <Pill tone="warning">
               <Clock className="size-3" aria-hidden /> Needs approval
@@ -582,7 +598,7 @@ function Hero() {
             initial={{ opacity: 0, x: -16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 1.3 }}
-            className="absolute -bottom-6 -left-6 hidden w-60 items-center gap-3 rounded-xl border border-border bg-surface p-3.5 shadow-lift lg:flex"
+            className="absolute -bottom-5 -left-4 hidden w-60 items-center gap-3 rounded-xl border border-border bg-surface p-3.5 shadow-lift lg:flex"
           >
             <span className="grid size-8 shrink-0 place-items-center rounded-full bg-success-soft text-success">
               <CheckCircle2 className="size-4" aria-hidden />
@@ -616,8 +632,25 @@ function UseCases() {
    Feature rows, each with a product mockup
    ================================================================== */
 
+/** Product mockup floating on a coloured illustration panel. */
+function Showcase({ art, children }: { art: string; children: ReactNode }) {
+  return (
+    <div className="relative overflow-hidden rounded-3xl p-5 shadow-soft sm:p-10">
+      <Image
+        src={art}
+        alt=""
+        fill
+        sizes="(min-width: 1024px) 540px, 100vw"
+        className="object-cover"
+      />
+      <div className="relative">{children}</div>
+    </div>
+  );
+}
+
 function FeatureRow({
   id,
+  art,
   icon: Icon,
   title,
   body,
@@ -626,6 +659,7 @@ function FeatureRow({
   children,
 }: {
   id?: string;
+  art: string;
   icon: LucideIcon;
   title: string;
   body: string;
@@ -651,7 +685,7 @@ function FeatureRow({
         </ul>
       </div>
       <div className={reverse ? "lg:order-1" : ""} aria-hidden>
-        {children}
+        <Showcase art={art}>{children}</Showcase>
       </div>
     </div>
   );
@@ -811,6 +845,7 @@ function Features() {
 
       <div className="mt-20 space-y-28">
         <FeatureRow
+          art="/images/panel-analysis.svg"
           icon={FileSearch}
           title="Start with research you can trust"
           body="Before anything is built, Veyra studies your market and shows its work, clearly separating facts from guesses."
@@ -824,6 +859,7 @@ function Features() {
         </FeatureRow>
 
         <FeatureRow
+          art="/images/panel-tasks.svg"
           icon={ListChecks}
           title="A team that hands work to each other"
           body="Tasks move between departments like they do in a real company. See who owns what, what is blocked and why."
@@ -838,6 +874,7 @@ function Features() {
         </FeatureRow>
 
         <FeatureRow
+          art="/images/panel-approvals.svg"
           icon={ShieldCheck}
           title="You decide what matters"
           body="Sensitive actions wait for you. Each request explains itself, so approving takes seconds, not research."
@@ -851,6 +888,7 @@ function Features() {
         </FeatureRow>
 
         <FeatureRow
+          art="/images/panel-activity.svg"
           icon={Activity}
           title="Follow progress without reading logs"
           body="A running story of your business, written for founders. Catch up in under a minute."
@@ -895,6 +933,48 @@ function HowItWorks() {
             </li>
           ))}
         </ol>
+      </div>
+    </section>
+  );
+}
+
+function MeetTeam() {
+  const points: { icon: LucideIcon; text: string }[] = [
+    { icon: Bot, text: "Each AI team member has a clear role and a current task" },
+    { icon: Users, text: "Invite real teammates to work alongside them" },
+    { icon: Clock, text: "Work continues around the clock, with updates when you return" },
+  ];
+  return (
+    <section className={`${container} py-24`}>
+      <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+        <div className="relative aspect-[10/7] overflow-hidden rounded-3xl shadow-lift">
+          <Image
+            src="/images/team.svg"
+            alt="A founder at a desk with four AI team members working beside them"
+            fill
+            sizes="(min-width: 1024px) 600px, 100vw"
+            className="object-cover"
+          />
+        </div>
+        <div>
+          <h2 className="max-w-md text-3xl font-semibold tracking-tight sm:text-4xl">
+            Meet the team that keeps working when you step away
+          </h2>
+          <p className="mt-4 max-w-md text-base leading-relaxed text-text-muted sm:text-lg">
+            You are the founder. Veyra gives you a team around you, so ideas turn into progress
+            every day.
+          </p>
+          <ul className="mt-8 space-y-4">
+            {points.map(({ icon: Icon, text }) => (
+              <li key={text} className="flex items-start gap-3 text-sm">
+                <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary-soft text-primary">
+                  <Icon className="size-4" aria-hidden />
+                </span>
+                <span className="pt-1.5">{text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );
@@ -1022,7 +1102,14 @@ function Faq() {
 function FinalCta() {
   return (
     <section className={`${container} py-24`}>
-      <div className="relative overflow-hidden rounded-3xl bg-primary px-6 py-16 text-center text-primary-foreground sm:px-12">
+      <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-indigo-600 to-violet-600 px-6 py-16 text-center text-white sm:px-12">
+        <Image
+          src="/images/launch.svg"
+          alt=""
+          width={420}
+          height={420}
+          className="pointer-events-none absolute -bottom-24 -right-16 hidden w-96 lg:block"
+        />
         <div
           aria-hidden
           className="bg-grid absolute inset-0 opacity-10 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]"
@@ -1036,13 +1123,13 @@ function FinalCta() {
         <div className="relative mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="/sign-up"
-            className={`${btn} h-11 bg-surface px-6 text-text hover:bg-surface-muted`}
+            className={`${btn} h-11 bg-white px-6 text-indigo-700 hover:bg-indigo-50`}
           >
             Start your startup
           </Link>
           <Link
             href="/sign-in"
-            className={`${btn} h-11 px-6 text-primary-foreground hover:bg-white/10`}
+            className={`${btn} h-11 px-6 text-white hover:bg-white/10`}
           >
             Sign in
           </Link>
@@ -1103,9 +1190,9 @@ function Footer() {
         ))}
       </div>
       <div className="border-t border-border">
-        {/* <p className={`${container} py-6 text-sm text-text-muted`}>
-          © {new Date().getFullYear()} Veyra. All rights reserved.
-        </p> */}
+        <p className={`${container} py-6 text-sm text-text-muted`}>
+          © {COPYRIGHT_YEAR} Veyra. All rights reserved.
+        </p>
       </div>
     </footer>
   );
@@ -1125,6 +1212,7 @@ export default function LandingPage() {
         <UseCases />
         <Features />
         <HowItWorks />
+        <MeetTeam />
         <Departments />
         <Control />
         <Testimonials />
