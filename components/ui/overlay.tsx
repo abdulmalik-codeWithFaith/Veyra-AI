@@ -12,8 +12,8 @@ const FOCUSABLE =
 export interface OverlayProps {
   open: boolean;
   onClose: () => void;
-  /** "center" for a Modal, "right" for a Drawer. */
-  variant: "center" | "right";
+  /** "center" for a Modal, "right" for a Drawer, "left" for the mobile navigation. */
+  variant: "center" | "right" | "left";
   labelledBy: string;
   describedBy?: string;
   className?: string;
@@ -78,13 +78,14 @@ export function Overlay({ open, onClose, variant, labelledBy, describedBy, class
 
   if (!mounted) return null;
 
-  const isDrawer = variant === "right";
+  const isDrawer = variant !== "center";
+  const offscreen = variant === "left" ? "-100%" : "100%";
 
   return createPortal(
     <MotionConfig reducedMotion="user">
       <AnimatePresence>
         {open && (
-          <div className={cn("fixed inset-0 z-50 flex", isDrawer ? "justify-end" : "items-center justify-center p-4")}>
+          <div className={cn("fixed inset-0 z-50 flex", variant === "right" ? "justify-end" : isDrawer ? "justify-start" : "items-center justify-center p-4")}>
             <motion.div
               aria-hidden
               className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
@@ -101,13 +102,13 @@ export function Overlay({ open, onClose, variant, labelledBy, describedBy, class
               aria-labelledby={labelledBy}
               aria-describedby={describedBy}
               tabIndex={-1}
-              initial={isDrawer ? { x: "100%" } : { opacity: 0, scale: 0.97, y: 8 }}
+              initial={isDrawer ? { x: offscreen } : { opacity: 0, scale: 0.97, y: 8 }}
               animate={isDrawer ? { x: 0 } : { opacity: 1, scale: 1, y: 0 }}
-              exit={isDrawer ? { x: "100%" } : { opacity: 0, scale: 0.98 }}
+              exit={isDrawer ? { x: offscreen } : { opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.22, ease: "easeOut" }}
               className={cn(
                 "relative flex max-h-full flex-col bg-surface shadow-lift outline-none",
-                isDrawer ? "h-full w-full border-l border-border" : "w-full rounded-2xl border border-border",
+                isDrawer ? cn("h-full w-full", variant === "left" ? "border-r border-border" : "border-l border-border") : "w-full rounded-2xl border border-border",
                 className,
               )}
             >

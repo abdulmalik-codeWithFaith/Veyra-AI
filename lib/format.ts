@@ -50,3 +50,16 @@ export function formatPercent(value: number): string {
 export function formatCompactNumber(value: number): string {
   return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value);
 }
+
+/** "Today", "Yesterday", or "Monday, 27 Oct". Used to group timelines by day. */
+export function formatDayLabel(iso: ISODate, now: number = Date.now()): string {
+  const startOfDay = (time: number) => {
+    const d = new Date(time);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  };
+  const days = Math.round((startOfDay(now) - startOfDay(new Date(iso).getTime())) / DAY);
+  if (days === 0) return "Today";
+  if (days === 1) return "Yesterday";
+  return new Date(iso).toLocaleDateString("en", { weekday: "long", day: "numeric", month: "short" });
+}

@@ -1,5 +1,6 @@
 import type {
   AgentStatus,
+  DeliverableType,
   AnalysisItemKind,
   ApprovalCategory,
   ApprovalStatus,
@@ -79,3 +80,25 @@ export const ANALYSIS_KIND_LABEL: Record<AnalysisItemKind, string> = {
   assumption: "Assumption",
   recommendation: "Recommendation",
 };
+
+export const MILESTONE_STATUS_LABEL = {
+  upcoming: "Upcoming",
+  in_progress: "In progress",
+  done: "Done",
+} as const;
+
+export const DELIVERABLE_TYPE_LABEL: Record<DeliverableType, string> = {
+  report: "Report",
+  document: "Document",
+  design: "Design",
+  code: "Code",
+  link: "Link",
+  dataset: "Data",
+  other: "Other",
+};
+
+export const ANALYSIS_STATUS_LABEL = {
+  not_started: "Not started",
+  in_progress: "In progress",
+  ready: "Ready",
+} as const;

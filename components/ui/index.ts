@@ -1,3 +1,4 @@
+export * from "./async-view";
 export * from "./avatar";
 export * from "./badge";
 export * from "./button";

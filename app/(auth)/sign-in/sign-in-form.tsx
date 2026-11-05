@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MotionConfig, motion } from "framer-motion";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { authService, startupService } from "@/services";
 
 type FieldName = "email" | "password";
 type Values = Record<FieldName, string>;
@@ -78,10 +79,10 @@ export function SignInForm() {
 
     setLoading(true);
     try {
-      // TODO: replace with authService.signIn(email, password) from "@/services" once the service layer exists.
-      await new Promise((resolve) => setTimeout(resolve, 700));
-      // TODO: route to the person's most recent startup (/s/[startupId]) once startups load from the service.
-      router.push("/new-startup");
+      await authService.signIn(values.email, values.password);
+      // Land on the most recent startup, or start a new one if there are none yet
+      const startups = await startupService.list();
+      router.push(startups.length > 0 ? `/s/${startups[0].id}` : "/new-startup");
     } catch {
       setErrors({ form: "Those details did not match. Please check them and try again." });
       setLoading(false);

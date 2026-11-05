@@ -27,6 +27,8 @@ interface DropdownProps {
   trigger: ReactNode;
   items: DropdownItem[];
   align?: "start" | "end";
+  /** Classes for the wrapper, e.g. "w-full" to stretch the trigger. */
+  className?: string;
   triggerClassName?: string;
   menuClassName?: string;
 }
@@ -39,7 +41,7 @@ const itemClass = (danger?: boolean) =>
   );
 
 /** Menu button with arrow-key navigation, Escape to close, and click-outside to dismiss. */
-export function Dropdown({ label, trigger, items, align = "end", triggerClassName, menuClassName }: DropdownProps) {
+export function Dropdown({ label, trigger, items, align = "end", className, triggerClassName, menuClassName }: DropdownProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -96,7 +98,7 @@ export function Dropdown({ label, trigger, items, align = "end", triggerClassNam
   }
 
   return (
-    <div ref={rootRef} className="relative inline-block">
+    <div ref={rootRef} className={cn("relative inline-block", className)}>
       <button
         ref={triggerRef}
         type="button"
